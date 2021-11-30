@@ -42,6 +42,7 @@ class HomeController extends Controller
     {
         // return $user_id;
         $my_id = Auth::id();
+        Pesan::where(['from' => $user_id, 'to' =>$my_id])->update(['is_read' => 1]);
         //getting all message for selected user
         //getting those message which id from = Auth::id() and to = user_id OR from = user_id and to = Auth::id();
         $pesan = Pesan::where(function ($query) use ($user_id, $my_id) {

@@ -17,33 +17,35 @@ $(document).ready(function () {
 
     var channel = pusher.subscribe("my-channel");
     channel.bind("my-event", function (data) {
-        alert(JSON.stringify(data));
-        // if (my_id == data.from) {
-        //     alert("sender");
-        // } else if (my_id == data.to) {
-        //     if (receiver_id == data.from) {
-        //         $("#" + data.from).click();
-        //     } else {
-        //         var pending = parseInt(
-        //             $("#" + data.from)
-        //                 .find(".pending")
-        //                 .html()
-        //         );
+        // alert(JSON.stringify(data));
+        if (my_id == data.from) {
+            // alert("sender");
+            $('#' + data.to).click();
+        } else if (my_id == data.to) {
+            if (receiver_id == data.from) {
+                $("#" + data.from).click();
+            } else {
+                var pending = parseInt(
+                    $("#" + data.from)
+                        .find(".pending")
+                        .html()
+                );
 
-        //         if (pending) {
-        //             $("#" + data.from)
-        //                 .find(".pending")
-        //                 .html(pending + 1);
-        //         } else {
-        //             $("#" + data.from).append('<span class="pending">1</span>');
-        //         }
-        //     }
-        // }
+                if (pending) {
+                    $("#" + data.from)
+                        .find(".pending")
+                        .html(pending + 1);
+                } else {
+                    $("#" + data.from).append('<span class="pending">1</span>');
+                }
+            }
+        }
     });
 
     $(".user").click(function () {
         $(".user").removeClass("active");
         $(this).addClass("active");
+        $(this).find('.pending').remove();
 
         receiver_id = $(this).attr("id");
         $.ajax({
@@ -53,6 +55,7 @@ $(document).ready(function () {
             cache: false,
             success: function (data) {
                 $("#pesan").html(data);
+                scrollToBottomFunc();
             },
         });
     });
@@ -72,8 +75,16 @@ $(document).ready(function () {
                 cache: false,
                 success: function (data) {},
                 error: function (jqXHR, status, err) {},
-                complete: function () {},
+                complete: function () {
+                    scrollToBottomFunc();
+                },
             });
         }
     });
+
+    function scrollToBottomFunc(){
+        $('.pesan-wrapper').animate({
+            scrollTop: $('.pesan-wrapper').get(0).scrollHeight
+        }, 50);
+    }
 });
